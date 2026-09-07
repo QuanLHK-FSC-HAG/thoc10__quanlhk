@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Slide, Lesson } from '../types';
 import { SlideSvgIllustration } from './SlideSvgIllustrations';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SlideCardProps {
   slide: Slide;
@@ -28,6 +29,8 @@ export const SlideCard: React.FC<SlideCardProps> = ({
   fontScale = 'normal',
   isFullscreen = false,
 }) => {
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
   const [showAnswer, setShowAnswer] = useState(false);
   const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
   const [imageError, setImageError] = useState(false);
@@ -82,7 +85,9 @@ export const SlideCard: React.FC<SlideCardProps> = ({
 
   const citationSource =
     slide.sourceCitation ||
-    `Nguồn tham khảo: Sách giáo khoa Tin học 10 (trang ${lesson.pageStart} - ${lesson.pageEnd}) • Bộ Kết nối tri thức với cuộc sống - NXB Giáo dục Việt Nam`;
+    (isEn
+      ? `Reference Source: Informatics 10 Textbook (pages ${lesson.pageStart} - ${lesson.pageEnd}) • Connecting Knowledge to Life Series - Vietnam Education Publishing House`
+      : `Nguồn tham khảo: Sách giáo khoa Tin học 10 (trang ${lesson.pageStart} - ${lesson.pageEnd}) • Bộ Kết nối tri thức với cuộc sống - NXB Giáo dục Việt Nam`);
 
   // =========================================================================
   // 1. TITLE SLIDE (1280 x 720)
@@ -98,7 +103,9 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           <div className="flex items-center gap-3">
             <div className="h-3 w-12 bg-[#2563EB] rounded-full" />
             <span className="text-[20px] font-extrabold uppercase tracking-wider text-[#2563EB]">
-              Tin học 10 • Kết nối tri thức với cuộc sống
+              {isEn
+                ? 'Informatics 10 • Connecting Knowledge to Life'
+                : 'Tin học 10 • Kết nối tri thức với cuộc sống'}
             </span>
           </div>
           <span className="px-4 py-1.5 rounded-full bg-[#EFF6FF] border border-[#2563EB]/30 text-[#2563EB] text-[18px] font-bold">
@@ -110,7 +117,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
         <div className="flex-1 min-h-0 flex flex-col justify-center max-w-5xl mx-auto w-full py-4 space-y-5">
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#EFF6FF] border border-[#2563EB]/25 text-[#2563EB] text-[18px] font-bold w-fit">
             <Sparkles className="w-5 h-5 text-[#2563EB]" />
-            <span>Bài giảng trình chiếu trực quan • KHBD Chuẩn</span>
+            <span>{isEn ? 'Visual Interactive Presentation • Standard Lesson Plan' : 'Bài giảng trình chiếu trực quan • KHBD Chuẩn'}</span>
           </div>
 
           <h1 className="text-[44px] font-black text-[#0F172A] tracking-tight leading-[1.2] uppercase">
@@ -580,7 +587,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
             <div className="rounded-2xl overflow-hidden border-2 border-slate-700 bg-slate-900 text-white shadow-lg">
               <div className="px-4 py-2 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
                 <span className="text-[17px] font-mono text-cyan-400 font-bold uppercase tracking-wider">
-                  Mã nguồn Python: {slide.codeSnippet.language}
+                  {isEn ? 'Python Source Code:' : 'Mã nguồn Python:'} {slide.codeSnippet.language}
                 </span>
                 <div className="flex items-center gap-2">
                   <span className="w-3 h-3 rounded-full bg-rose-500" />
@@ -593,7 +600,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
               </div>
               {slide.codeSnippet.output && (
                 <div className="px-4 py-2 bg-slate-950 border-t border-slate-800 font-mono text-[19px] text-amber-300 flex items-center gap-3">
-                  <span className="text-slate-400">Kết quả chạy:</span>
+                  <span className="text-slate-400">{isEn ? 'Execution Output:' : 'Kết quả chạy:'}</span>
                   <span>{slide.codeSnippet.output}</span>
                 </div>
               )}
@@ -646,14 +653,14 @@ export const SlideCard: React.FC<SlideCardProps> = ({
           <div className="flex-1 min-h-0 flex flex-col justify-between p-4 rounded-2xl bg-[#F8FAFC] border-2 border-[#CBD5E1] shadow-xs space-y-2.5">
             <div className="bg-amber-50 border-l-4 border-amber-500 p-2.5 rounded-r-xl">
               <span className="text-[16px] font-black uppercase text-amber-900 block mb-0.5">
-                Tình huống thực tế (SGK):
+                {isEn ? 'Real-world Scenario (Textbook):' : 'Tình huống thực tế (SGK):'}
               </span>
               <p className="text-[19px] font-medium text-[#1E293B] leading-snug">
                 {slide.situation.context}
               </p>
             </div>
             <div className="font-bold text-[19px] text-[#0F172A] px-1">
-              Câu hỏi: {slide.situation.question}
+              {isEn ? 'Question:' : 'Câu hỏi:'} {slide.situation.question}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
               {slide.situation.options.map((opt, oIdx) => (
@@ -670,11 +677,11 @@ export const SlideCard: React.FC<SlideCardProps> = ({
                       <span className="font-black text-[18px]">{opt.label}</span>
                       {opt.isRecommended ? (
                         <span className="text-[14px] font-bold px-2 py-0.5 rounded-full bg-emerald-600 text-white">
-                          Nên thực hiện
+                          {isEn ? 'Recommended' : 'Nên thực hiện'}
                         </span>
                       ) : (
                         <span className="text-[14px] font-bold px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">
-                          Hạn chế / Cảnh báo
+                          {isEn ? 'Warning / Caution' : 'Hạn chế / Cảnh báo'}
                         </span>
                       )}
                     </div>
@@ -683,7 +690,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
                     </p>
                   </div>
                   <p className="text-[16px] italic text-[#475569] leading-snug border-t border-slate-200 pt-1 mt-1">
-                    Hệ quả: {opt.consequence}
+                    {isEn ? 'Consequence:' : 'Hệ quả:'} {opt.consequence}
                   </p>
                 </div>
               ))}
@@ -770,7 +777,15 @@ export const SlideCard: React.FC<SlideCardProps> = ({
                 className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] hover:bg-[#DBEAFE] text-[16px] font-bold transition-colors cursor-pointer border border-[#2563EB]/30"
               >
                 {showAnswer ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                <span>{showAnswer ? 'Ẩn đáp án' : 'Hiển thị đáp án'}</span>
+                <span>
+                  {showAnswer
+                    ? isEn
+                      ? 'Hide answer'
+                      : 'Ẩn đáp án'
+                    : isEn
+                    ? 'Show answer'
+                    : 'Hiển thị đáp án'}
+                </span>
               </button>
 
               {showAnswer && slide.quiz.answer && (
@@ -791,7 +806,7 @@ export const SlideCard: React.FC<SlideCardProps> = ({
             <span>{citationSource}</span>
           </div>
           <div className="text-[17px] text-[#64748B] font-semibold">
-            Giáo viên: <strong className="text-[#1E293B]">QuanLHK</strong>
+            {isEn ? 'Teacher:' : 'Giáo viên:'} <strong className="text-[#1E293B]">QuanLHK</strong>
           </div>
         </div>
       )}

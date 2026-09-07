@@ -9,6 +9,7 @@ import {
 import { Lesson } from '../types';
 import { SlideCard } from './SlideCard';
 import { SlideControls } from './SlideControls';
+import { useLanguage } from '../context/LanguageContext';
 
 interface SlideViewerProps {
   lesson: Lesson;
@@ -21,6 +22,8 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
   isFullscreen,
   onToggleFullscreen,
 }) => {
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [showThumbnails, setShowThumbnails] = useState(false);
   const [fontScale, setFontScale] = useState<'normal' | 'large' | 'extra'>('normal');
@@ -220,14 +223,14 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
               {lesson.shortTitle}
             </span>
             <span className="hidden sm:inline text-xs text-[#64748B] font-medium">
-              Khung chiếu chuẩn 16:9 • KHBD Giáo khoa
+              {t('viewer.canvas_badge')}
             </span>
           </div>
 
           {/* Font scale buttons */}
           <div className="flex items-center gap-1 bg-white border border-[#CBD5E1] rounded-full p-1 shadow-xs">
             <span className="text-xs text-[#475569] px-2 font-bold hidden md:inline flex items-center gap-1.5">
-              <Type className="w-3.5 h-3.5 text-[#2563EB]" /> Cỡ chữ:
+              <Type className="w-3.5 h-3.5 text-[#2563EB]" /> {t('viewer.font_size')}:
             </span>
             <button
               onClick={() => setFontScale('normal')}
@@ -236,9 +239,9 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   ? 'bg-[#2563EB] text-white'
                   : 'text-[#475569] hover:bg-[#F1F5F9]'
               }`}
-              title="Cỡ chữ 24px - 28px"
+              title={isEn ? 'Standard font size (24px - 28px)' : 'Cỡ chữ 24px - 28px'}
             >
-              Chuẩn
+              {t('viewer.font_normal')}
             </button>
             <button
               onClick={() => setFontScale('large')}
@@ -247,9 +250,9 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   ? 'bg-[#2563EB] text-white'
                   : 'text-[#475569] hover:bg-[#F1F5F9]'
               }`}
-              title="Cỡ chữ lớn 28px - 32px"
+              title={isEn ? 'Large font size (28px - 32px)' : 'Cỡ chữ lớn 28px - 32px'}
             >
-              Lớn (28-32px)
+              {t('viewer.font_large')}
             </button>
             <button
               onClick={() => setFontScale('extra')}
@@ -258,9 +261,9 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
                   ? 'bg-[#2563EB] text-white'
                   : 'text-[#475569] hover:bg-[#F1F5F9]'
               }`}
-              title="Cỡ chữ cực lớn 32px+"
+              title={isEn ? 'Extra large font size (32px+)' : 'Cỡ chữ cực lớn 32px+'}
             >
-              Cực lớn
+              {t('viewer.font_extra')}
             </button>
           </div>
         </div>
@@ -284,7 +287,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
           <button
             onClick={handlePrev}
             disabled={currentSlideIndex === 0}
-            title="Slide trước (←)"
+            title={t('controls.prev_slide')}
             className={`absolute left-3 z-30 w-12 h-12 rounded-full cursor-pointer flex items-center justify-center transition-all bg-white/90 hover:bg-white text-[#475569] hover:text-[#2563EB] shadow-md border border-[#CBD5E1] ${
               currentSlideIndex === 0
                 ? 'opacity-0 pointer-events-none'
@@ -300,7 +303,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
           <button
             onClick={handleNext}
             disabled={currentSlideIndex === totalSlides - 1}
-            title="Slide sau (→ hoặc Phím cách)"
+            title={t('controls.next_slide')}
             className={`absolute right-3 z-30 w-12 h-12 rounded-full cursor-pointer flex items-center justify-center transition-all bg-white/90 hover:bg-white text-[#475569] hover:text-[#2563EB] shadow-md border border-[#CBD5E1] ${
               currentSlideIndex === totalSlides - 1
                 ? 'opacity-0 pointer-events-none'
@@ -349,7 +352,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
         {/* Brief fading toast hint upon entering fullscreen, then 100% hidden */}
         {isFullscreen && showEscHint && (
           <div className="absolute top-4 right-4 z-40 bg-black/80 backdrop-blur-md text-white/90 text-xs px-3.5 py-1.5 rounded-full border border-white/20 shadow-xl transition-opacity duration-300 pointer-events-none font-medium">
-            Nhấn ESC hoặc click đúp để thoát toàn màn hình
+            {t('viewer.esc_hint')}
           </div>
         )}
       </div>
@@ -381,7 +384,7 @@ export const SlideViewer: React.FC<SlideViewerProps> = ({
               <div className="flex items-center gap-2">
                 <LayoutGrid className="w-5 h-5 text-[#2563EB]" />
                 <h3 className="font-bold text-[#0F172A] text-base">
-                  Danh sách Slide: {lesson.title} ({totalSlides} slide)
+                  {t('viewer.toc_title')}: {lesson.title} ({totalSlides} {t('sidebar.slides_count')})
                 </h3>
               </div>
               <button

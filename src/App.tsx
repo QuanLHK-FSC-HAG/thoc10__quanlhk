@@ -1,15 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { textbookData } from './data/bookData';
 import { Lesson } from './types';
 import { AppHeader } from './components/AppHeader';
 import { LessonSidebar } from './components/LessonSidebar';
 import { SlideViewer } from './components/SlideViewer';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+import { getTranslatedBook } from './utils/translateContent';
 
-export default function App() {
-  // Default to Lesson 1 of Chapter 1
-  const [currentLesson, setCurrentLesson] = useState<Lesson>(
-    textbookData.chapters[0].lessons[0]
-  );
+function AppContent() {
+  const { language, t } = useLanguage();
+  const [currentLessonId, setCurrentLessonId] = useState<string>('bai-1');
+
+  // Dynamically compute translated textbook data based on language (vi or en)
+  const localizedBook = useMemo(() => {
+    return getTranslatedBook(textbookData, language);
+  }, [language]);
+
+  // Resolve current active lesson in localized data
+  const currentLesson = useMemo(() => {
+    for (const chapter of localizedBook.chapters) {
+      const match = chapter.lessons.find((l) => l.id === currentLessonId);
+      if (match) return match;
+    }
+    return localizedBook.chapters[0].lessons[0];
+  }, [localizedBook, currentLessonId]);
+
   // Sidebar state: open by default on desktop, closed on mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
@@ -17,6 +32,7 @@ export default function App() {
     }
     return true;
   });
+
   // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -54,7 +70,7 @@ export default function App() {
       {/* Horizontal Top Header */}
       {!isFullscreen && (
         <AppHeader
-          book={textbookData}
+          book={localizedBook}
           currentLesson={currentLesson}
           isSidebarOpen={isSidebarOpen}
           onToggleSidebar={() => setIsSidebarOpen((prev) => !prev)}
@@ -68,10 +84,10 @@ export default function App() {
         {/* Left Category Sidebar: Chương -> Bài */}
         {!isFullscreen && (
           <LessonSidebar
-            book={textbookData}
+            book={localizedBook}
             currentLesson={currentLesson}
             onSelectLesson={(lesson) => {
-              setCurrentLesson(lesson);
+              setCurrentLessonId(lesson.id);
             }}
             isOpen={isSidebarOpen}
             onCloseMobile={() => setIsSidebarOpen(false)}
@@ -97,23 +113,31 @@ export default function App() {
           <div className="flex items-center gap-4 text-[10px] text-[#94A3B8] font-bold uppercase tracking-widest">
             <div className="flex items-center gap-1.5">
               <kbd className="px-1.5 py-0.5 border border-[#E2E8F0] rounded bg-[#F8FAFC] text-[9px] font-mono text-[#64748B]">ESC</kbd>
-              <span>Thoát</span>
+              <span>{t('footer.esc')}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <kbd className="px-1.5 py-0.5 border border-[#E2E8F0] rounded bg-[#F8FAFC] text-[9px] font-mono text-[#64748B]">SPACE</kbd>
-              <span>Tiếp theo</span>
+              <span>{t('footer.space')}</span>
             </div>
             <div className="hidden sm:flex items-center gap-1.5">
               <kbd className="px-1.5 py-0.5 border border-[#E2E8F0] rounded bg-[#F8FAFC] text-[9px] font-mono text-[#64748B]">← / →</kbd>
-              <span>Chuyển slide</span>
+              <span>{t('footer.arrow')}</span>
             </div>
           </div>
 
           <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
-            Designed by <span className="text-[#2563EB]">QuanLHK</span>
+            {t('footer.designed_by')} <span className="text-[#2563EB]">QuanLHK</span>
           </p>
         </footer>
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }

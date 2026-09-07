@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LessonSearchProps {
   searchQuery: string;
@@ -10,6 +11,8 @@ export const LessonSearch: React.FC<LessonSearchProps> = ({
   searchQuery,
   onSearchChange,
 }) => {
+  const { t } = useLanguage();
+
   return (
     <div className="relative w-full">
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#94A3B8]">
@@ -20,7 +23,7 @@ export const LessonSearch: React.FC<LessonSearchProps> = ({
         type="text"
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
-        placeholder="Tìm tên bài học..."
+        placeholder={t('sidebar.search_placeholder')}
         className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-md py-2 pl-9 pr-8 text-xs text-[#1E293B] placeholder-[#94A3B8] focus:ring-1 focus:ring-[#2563EB] focus:border-[#2563EB] outline-hidden transition-all"
       />
       {searchQuery && (

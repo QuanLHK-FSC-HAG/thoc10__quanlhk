@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { ChevronDown, ChevronRight, BookOpen, Layers, CheckCircle } from 'lucide-react';
 import { BookData, Chapter, Lesson } from '../types';
 import { LessonSearch } from './LessonSearch';
+import { useLanguage } from '../context/LanguageContext';
 
 interface LessonSidebarProps {
   book: BookData;
@@ -18,6 +19,8 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
   isOpen,
   onCloseMobile,
 }) => {
+  const { language, t } = useLanguage();
+  const isEn = language === 'en';
   const [searchQuery, setSearchQuery] = useState('');
   // Expanded chapters state
   const [expandedChapters, setExpandedChapters] = useState<Record<string, boolean>>(() => {
@@ -81,7 +84,7 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
         <div className="flex items-center justify-between text-[11px] text-[#64748B] px-1 font-medium">
           <span className="flex items-center gap-1.5 font-semibold text-[10px] uppercase tracking-wider">
             <Layers className="w-3.5 h-3.5 text-[#2563EB]" />
-            {book.chapters.length} Chủ đề • {book.totalLessons} Bài
+            {book.chapters.length} {t('sidebar.topics')} • {book.totalLessons} {t('sidebar.lessons')}
           </span>
           <button
             onClick={() => {
@@ -94,7 +97,7 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
             }}
             className="text-[10px] uppercase tracking-wider font-bold text-[#2563EB] hover:underline cursor-pointer"
           >
-            {Object.values(expandedChapters).some((v) => !v) ? 'Mở tất cả' : 'Thu gọn'}
+            {Object.values(expandedChapters).some((v) => !v) ? t('sidebar.expand_all') : t('sidebar.collapse_all')}
           </button>
         </div>
       </div>
@@ -103,12 +106,19 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
       <div className="flex-1 overflow-y-auto py-1">
         {filteredChapters.length === 0 ? (
           <div className="py-8 text-center text-xs text-[#94A3B8]">
-            Không tìm thấy bài học phù hợp với từ khóa "{searchQuery}".
+            {isEn
+              ? `No lessons found matching "${searchQuery}".`
+              : `Không tìm thấy bài học phù hợp với từ khóa "${searchQuery}".`}
           </div>
         ) : (
           filteredChapters.map((chapter) => {
             const isExpanded = !!expandedChapters[chapter.id] || !!searchQuery;
             const hasActiveLesson = chapter.lessons.some((l) => l.id === currentLesson.id);
+
+            // Display title cleanly whether it includes Topic/Chủ đề or not
+            const displayTitle = chapter.title.includes(':') 
+              ? chapter.title 
+              : `${isEn ? 'Topic' : 'Chủ đề'} ${chapter.number}: ${chapter.title}`;
 
             return (
               <div key={chapter.id} className="border-b border-[#F1F5F9] last:border-b-0">
@@ -120,7 +130,7 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
                 >
                   <div className="flex items-center gap-2 min-w-0 pr-2">
                     <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-widest truncate">
-                      Chủ đề {chapter.number}: {chapter.title}
+                      {displayTitle}
                     </span>
                   </div>
                   <span className="text-[#94A3B8] group-hover:text-[#64748B] p-0.5 shrink-0">
@@ -190,8 +200,8 @@ export const LessonSidebar: React.FC<LessonSidebarProps> = ({
 
       {/* Footer info in sidebar */}
       <div className="px-4 py-2 border-t border-[#F1F5F9] bg-[#F8FAFC] text-[10px] text-[#94A3B8] font-bold uppercase tracking-wider flex items-center justify-between">
-        <span>SGK Tin học 10</span>
-        <span className="text-[#64748B]">NXB Giáo dục VN</span>
+        <span>{isEn ? 'Informatics 10' : 'SGK Tin học 10'}</span>
+        <span className="text-[#64748B]">{isEn ? 'Vietnam Education Publishing' : 'NXB Giáo dục VN'}</span>
       </div>
     </aside>
   );
