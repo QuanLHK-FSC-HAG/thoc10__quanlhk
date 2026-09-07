@@ -1,0 +1,6 @@
+{
+  "name": "Bài giảng Tin học 10 - Kết nối tri thức",
+  "description": "WebApp trình chiếu bài giảng Slides từ SGK Tin học 10 Kết nối tri thức với cuộc sống dành cho giáo viên QuanLHK",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
