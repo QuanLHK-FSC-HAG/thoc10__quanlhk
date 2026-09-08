@@ -61,7 +61,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
       {/* Right: Language Toggle (BEFORE TEACHER), Teacher, Live Status, Fullscreen */}
       <div className="flex items-center gap-2.5 sm:gap-4 lg:gap-5 text-sm shrink-0">
-        {/* Language Selector: VIETNAM / ENGLISH with Flags */}
+        {/* Language Selector: VIETNAMESE / ENGLISH with Flags */}
         <div
           id="language-toggle-group"
           className="flex items-center p-1 bg-[#F1F5F9] border border-[#CBD5E1] rounded-xl shadow-xs"
@@ -76,10 +76,10 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 ? 'bg-white text-[#1E293B] shadow-xs border border-[#E2E8F0]'
                 : 'text-[#64748B] hover:text-[#0F172A] hover:bg-white/50 border border-transparent'
             }`}
-            title="Tiếng Việt (Vietnam)"
+            title="Tiếng Việt (Vietnamese)"
           >
             <VietnamFlag className="w-4 h-2.5 sm:h-3 rounded-xs shadow-xs" />
-            <span className="tracking-wide">VIETNAM</span>
+            <span className="tracking-wide">VIETNAMESE</span>
           </button>
           <button
             id="btn-lang-en"
